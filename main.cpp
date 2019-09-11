@@ -28,11 +28,19 @@ features => FEAT_IN | FEAT_FAN | FEAT_TEMP,
 
 */
 
+void readSensor(short int msb,short int lsb, short int index, short int data){
+    outb(msb, index);
+    int t1 = inb(data);
+    outb(lsb, index);
+    int t2 = inb(data);
+    printf("%d\n",t1 << 8 | t2);  
+}
+
 int main(){
 
     short int EFIR = 0x4E;
     short int EFDR = 0x4F;
-    int base_address;
+    short int base_address;
     short int t1,t2;
 
     if (ioperm(EFIR, 2, 1))
@@ -85,10 +93,10 @@ int main(){
     printf("%x\n",cpu_fan_divider);*/
 
     //Sensor base address
-    int index = base_address + 5;
-    int data = base_address + 6;
+    short int index = base_address + 5;
+    short int data = base_address + 6;
 
-    /*if (ioperm(index, 2, 1))
+    if (ioperm(index, 2, 1))
        {perror("ioperm error");return 0;}
 
     printf("Select bank 4 to read CPU RPM\n");
@@ -97,14 +105,25 @@ int main(){
     outb(0x04,data);
   
     printf("Reading CPU fan RPM\n");
-    int cpu_fan_value_offset_msb = 0xC2;
-    int cpu_fan_value_offset_lsb = 0xC3;
-    outb(cpu_fan_value_offset_msb, index);
-    t1 = inb(data);
-    outb(cpu_fan_value_offset_lsb, index);
-    t1 = inb(data);
-    printf("%d\n",t1 >> 8 | t2);  
-    */
+    readSensor(0xC2,0xC3,index,data);
+
+    printf("Reading Sys fan RPM\n");
+    readSensor(0xC0,0xC1,index,data); 
+
+    printf("Reading AUX0 fan RPM\n");
+    readSensor(0xC4,0xC5,index,data);  
+
+     printf("Reading AUX1 fan RPM\n");
+    readSensor(0xC6,0xC7,index,data);  
+
+     printf("Reading AUX2 fan RPM\n");
+    readSensor(0xC8,0xC9,index,data);  
+
+     printf("Reading AUX3 fan RPM\n");
+    readSensor(0xCA,0xCB,index,data);  
+
+     printf("Reading AUX4 fan RPM\n");
+    readSensor(0xCE,0xCF,index,data);                  
 
     //exit extended function mode
     printf("Exit extended mode\n");
