@@ -30,8 +30,8 @@ features => FEAT_IN | FEAT_FAN | FEAT_TEMP,
 
 int main(){
 
-    short int EFIR = 0x2E;
-    short int EFDR = 0x2F;
+    short int EFIR = 0x4E;
+    short int EFDR = 0x4F;
     int base_address;
     short int t1,t2;
 
@@ -40,33 +40,23 @@ int main(){
     
     outb(0xaa,EFIR);
 
-
-
     //enter extended function mode
     printf("Entering extended mode\n");
-    usleep(1000);
     outb(0x87,EFIR);
-    usleep(1000);
     outb(0x87,EFIR);
 
     //read device ID
     printf("Reading device ID\n");
-    usleep(1000);
     outb(0x20,EFIR);
-    usleep(1000);
     t1 = inb(EFDR);
-    usleep(1000);
     outb(0x21,EFIR);
-    usleep(1000);
     t2 = inb(EFDR);
     printf("%x\n",t1 << 8 | t2);  
 
     //configure the configuration registers
     //Fan monitor is logical device B
     printf("Select logical device B\n");
-    usleep(100);
     outb(0x07,EFIR);//Set Device number register
-    usleep(100);
     outb(0x0B,EFDR); //Select Device "B"
 
 
